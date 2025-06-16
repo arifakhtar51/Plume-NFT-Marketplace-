@@ -57,25 +57,7 @@ const Home = () => {
               </div>
             </div>
             <div className="flex flex-col sm:flex-row justify-center gap-6">
-              <button
-                onClick={() => window.ethereum.request({
-                  method: 'wallet_addEthereumChain',
-                  params: [{
-                    chainId: '0x99D5B5',
-                    chainName: 'Plume Testnet',
-                    nativeCurrency: {
-                      name: 'PLUME',
-                      symbol: 'PLUME',
-                      decimals: 18
-                    },
-                    rpcUrls: ['https://plume-testnet.rpc.thirdweb.com'],
-                    blockExplorerUrls: ['https://plume-testnet-explorer.com']
-                  }]
-                })}
-                className="inline-block bg-blue-600 text-white px-8 py-4 rounded-lg hover:bg-blue-700 text-lg font-medium transition-colors"
-              >
-                Add Plume Testnet
-              </button>
+            
             </div>
           </div>
         </div>

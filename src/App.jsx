@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import Web3Modal from 'web3modal';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
-import CreateNFT from './components/CreateNFT';
+import MintNFT from './components/MintNFT';
 import MyNFTs from './components/MyNFTs';
 import Marketplace from './components/Marketplace';
 
@@ -44,7 +44,7 @@ function App() {
         <div className="container mx-auto px-4 py-8">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/create" element={<CreateNFT account={account} />} />
+            <Route path="/create" element={<MintNFT account={account} />} />
             <Route path="/my-nfts" element={<MyNFTs account={account} />} />
             <Route path="/marketplace" element={<Marketplace account={account} />} />
           </Routes>

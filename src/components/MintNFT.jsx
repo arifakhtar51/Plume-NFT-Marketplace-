@@ -13,9 +13,9 @@ const MintNFT = ({ account }) => {
 
   const MARKETPLACE_ADDRESS = '0x2c87064a63bfd4b9ad347540b7da055e7f8ae23c'; // ETH marketplace
 
-  // Replace with your Pinata API credentials
-  const PINATA_API_KEY = process.env.REACT_APP_PINATA_API_KEY;
-  const PINATA_SECRET_API_KEY = process.env.REACT_APP_PINATA_SECRET_API_KEY;
+  // Pinata API credentials
+  const PINATA_API_KEY = '2183cb1e2753a69d1b0c';
+  const PINATA_SECRET_API_KEY = 'bc9a74d849368b7f230ec5ba89c48b0d30d25eb4cf0a78b77b1770ede332b070';
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -32,30 +32,34 @@ const MintNFT = ({ account }) => {
     }
 
     try {
+      console.log('Starting NFT minting process...');
       setLoading(true);
       setError('');
 
       // Upload image to IPFS
+      console.log('Uploading image to IPFS...');
       const formData = new FormData();
       formData.append('file', file);
 
       const imageResponse = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
         method: 'POST',
         headers: {
-          pinata_api_key: PINATA_API_KEY,
-          pinata_secret_api_key: PINATA_SECRET_API_KEY,
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI5OTMyNjE0OC1hMzIzLTQ0YzItYjUwNi00MTU0YTNiMTNmMzMiLCJlbWFpbCI6ImFyaWZha2h0YXI5MDJAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6ImE0NjJlYTNjZGU1NzU4ZmZlOWJjIiwic2NvcGVkS2V5U2VjcmV0IjoiZmFjOGYzY2Q1MGRiZWE5OTllOGNjNjliMTUzYjQyMjNmMjNiODE4M2JhZjAxZWQ5N2YyMzIzOGEwNDhkM2NmYyIsImV4cCI6MTc4MTQ1NzcxMH0.OiFKDLvkRNmGJRSLLljFM0Dvxc4tiYMbqtiohD1H-6I`
         },
         body: formData,
       });
 
       if (!imageResponse.ok) {
+        console.error('Image upload failed:', await imageResponse.text());
         throw new Error(`Image upload failed: ${imageResponse.status}`);
       }
 
       const imageData = await imageResponse.json();
+      console.log('Image uploaded successfully:', imageData);
       const imageHash = imageData.IpfsHash;
 
       // Upload metadata to IPFS
+      console.log('Uploading metadata to IPFS...');
       const metadata = {
         name,
         description,
@@ -66,22 +70,26 @@ const MintNFT = ({ account }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          pinata_api_key: PINATA_API_KEY,
-          pinata_secret_api_key: PINATA_SECRET_API_KEY,
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI5OTMyNjE0OC1hMzIzLTQ0YzItYjUwNi00MTU0YTNiMTNmMzMiLCJlbWFpbCI6ImFyaWZha2h0YXI5MDJAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiRlJBMSJ9LHsiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjEsImlkIjoiTllDMSJ9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6ImE0NjJlYTNjZGU1NzU4ZmZlOWJjIiwic2NvcGVkS2V5U2VjcmV0IjoiZmFjOGYzY2Q1MGRiZWE5OTllOGNjNjliMTUzYjQyMjNmMjNiODE4M2JhZjAxZWQ5N2YyMzIzOGEwNDhkM2NmYyIsImV4cCI6MTc4MTQ1NzcxMH0.OiFKDLvkRNmGJRSLLljFM0Dvxc4tiYMbqtiohD1H-6I`
         },
         body: JSON.stringify(metadata),
       });
 
       if (!metadataResponse.ok) {
+        console.error('Metadata upload failed:', await metadataResponse.text());
         throw new Error(`Metadata upload failed: ${metadataResponse.status}`);
       }
 
       const metadataData = await metadataResponse.json();
+      console.log('Metadata uploaded successfully:', metadataData);
       const metadataHash = metadataData.IpfsHash;
 
       // Mint NFT using ETH contract
+      console.log('Connecting to Ethereum network...');
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
+      console.log('Connected to wallet:', await signer.getAddress());
+      
       const contract = new ethers.Contract(
         MARKETPLACE_ADDRESS,
         ['function mint(string memory tokenURI, uint256 price) public'],
@@ -89,8 +97,11 @@ const MintNFT = ({ account }) => {
       );
 
       const priceInWei = ethers.parseEther(price);
+      console.log('Minting NFT with price:', priceInWei.toString());
       const tx = await contract.mint(metadataHash, priceInWei);
+      console.log('Transaction sent:', tx.hash);
       await tx.wait();
+      console.log('Transaction confirmed!');
 
       alert('NFT minted successfully!');
       navigate('/my-nfts');
